@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 using ESRI.ArcGIS;
 using ESRI.ArcGIS.ADF.Connection.AGS;
 using ESRI.ArcGIS.Server;
 using RegisterSOE.Properties;
-using System.Text.RegularExpressions;
-using System.Web.Script.Serialization;
-using System.Collections.Generic;
 
 namespace RegisterSOE
 {
