@@ -29,7 +29,7 @@ Note that in order to install the server object extension you must be an adminis
 
 ### Setting up a map service to use the SOE ###
 
-1.	Open up the ArcGIS Server manager page. The URL will be http://<Your Server Name>/ArcGIS/Manager.
+1.	Open up the ArcGIS Server manager page. The URL will be `http://<Your Server Name>/ArcGIS/Manager`.
 2.	Log in
 3.	Create a new map service or edit an existing map service definition. The map service must have LRS layers grouped by LRS year. See the example below.
 4.	In the capabilities tab, check the "Layer Metadata" capability
