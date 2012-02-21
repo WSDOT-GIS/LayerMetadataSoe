@@ -2,19 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.EnterpriseServices;
-using System.Linq;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Xsl;
 using ESRI.ArcGIS.Carto;
 using ESRI.ArcGIS.esriSystem;
 using ESRI.ArcGIS.Geodatabase;
 using ESRI.ArcGIS.Server;
 using ESRI.ArcGIS.SOESupport;
-using System.Xml.Xsl;
-using System.Xml;
 using LayerMetadataSoe.Properties;
-using System.IO;
 
 namespace LayerMetadataSoe
 {
@@ -142,22 +141,7 @@ namespace LayerMetadataSoe
 			{
 				// Transform to HTML using XSLT.
 				responseProperties = "{\"Content-Type\" : \"text/html\"}";
-				var xsltDoc = new XmlDocument();
-				xsltDoc.LoadXml(Resources.FgdcPlusHtml5);
-				var xForm = new XslCompiledTransform();
-				xForm.Load(xsltDoc);
-
-				var xmlDoc = new XmlDocument();
-				xmlDoc.LoadXml(xml);
-				var args = new XsltArgumentList();
-
-				byte[] bytes;
-				using (var memStream = new MemoryStream())
-				{
-					xForm.Transform(xmlDoc, args, memStream);
-					bytes = memStream.ToArray();
-				}
-				return bytes;
+				return TransformToHtml(xml);
 			}
 			else // if (string.Compare(outputFormat, "xml", true) == 0)
 			{
@@ -165,6 +149,31 @@ namespace LayerMetadataSoe
 				return Encoding.UTF8.GetBytes(xml);
 			}
 
+		}
+
+		/// <summary>
+		/// Transforms metadata XML into HTML using XSLT.
+		/// </summary>
+		/// <param name="xml">Metadata XML from a feature layer.</param>
+		/// <returns>Returns bytes for the output HTML.</returns>
+		private static byte[] TransformToHtml(string xml)
+		{
+			var xsltDoc = new XmlDocument();
+			xsltDoc.LoadXml(Resources.FgdcPlusHtml5);
+			var xForm = new XslCompiledTransform();
+			xForm.Load(xsltDoc);
+
+			var xmlDoc = new XmlDocument();
+			xmlDoc.LoadXml(xml);
+			var args = new XsltArgumentList();
+
+			byte[] bytes;
+			using (var memStream = new MemoryStream())
+			{
+				xForm.Transform(xmlDoc, args, memStream);
+				bytes = memStream.ToArray();
+			}
+			return bytes;
 		}
 	}
 }
