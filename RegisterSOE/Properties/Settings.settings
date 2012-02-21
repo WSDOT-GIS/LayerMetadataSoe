@@ -6,16 +6,16 @@
       <Value Profile="(Default)">localhost</Value>
     </Setting>
     <Setting Name="SoetClsId" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">MetadataSoe.MetadataSoe</Value>
+      <Value Profile="(Default)">LayerMetadataSoe.LayerMetadataSoe</Value>
     </Setting>
     <Setting Name="SoetDescription" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Provides a map service with the ability to export the metadata associated with its layers.</Value>
     </Setting>
     <Setting Name="SoetName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">MetadataExport</Value>
+      <Value Profile="(Default)">LayerMetadataSoe</Value>
     </Setting>
     <Setting Name="SoetDisplayName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">Metadata Export</Value>
+      <Value Profile="(Default)">Layer Metadata</Value>
     </Setting>
     <Setting Name="SoetInfo" Type="System.String" Scope="Application">
       <Value Profile="(Default)">{"SupportsREST":"true","SupportsMSD":"true"}</Value>

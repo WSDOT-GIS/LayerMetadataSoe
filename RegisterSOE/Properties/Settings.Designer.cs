@@ -34,7 +34,7 @@ namespace RegisterSOE.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MetadataSoe.MetadataSoe")]
+        [global::System.Configuration.DefaultSettingValueAttribute("LayerMetadataSoe.LayerMetadataSoe")]
         public string SoetClsId {
             get {
                 return ((string)(this["SoetClsId"]));
@@ -53,7 +53,7 @@ namespace RegisterSOE.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MetadataExport")]
+        [global::System.Configuration.DefaultSettingValueAttribute("LayerMetadataSoe")]
         public string SoetName {
             get {
                 return ((string)(this["SoetName"]));
@@ -62,7 +62,7 @@ namespace RegisterSOE.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Metadata Export")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Layer Metadata")]
         public string SoetDisplayName {
             get {
                 return ((string)(this["SoetDisplayName"]));
