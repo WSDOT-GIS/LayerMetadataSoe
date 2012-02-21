@@ -11,6 +11,10 @@ using ESRI.ArcGIS.esriSystem;
 using ESRI.ArcGIS.Geodatabase;
 using ESRI.ArcGIS.Server;
 using ESRI.ArcGIS.SOESupport;
+using System.Xml.Xsl;
+using System.Xml;
+using LayerMetadataSoe.Properties;
+using System.IO;
 
 namespace LayerMetadataSoe
 {
@@ -47,7 +51,7 @@ namespace LayerMetadataSoe
 
 			RestOperation getLayerMetadataOp = new RestOperation("getLayerMetadata",
 				new string[] { "layer" },
-				new string[] { "xml" },
+				new string[] { "xml", "html" },
 				GetMetadataForLayer
 				);
 
@@ -108,6 +112,7 @@ namespace LayerMetadataSoe
 			IDataset layer = null;
 
 			string xml = null;
+			responseProperties = "{\"Content-Type\" : \"text/xml\"}";
 			try
 			{
 				layer = msDataAccess.GetDataSource(defaultMapName, layerIdInt) as IDataset;
@@ -127,15 +132,39 @@ namespace LayerMetadataSoe
 				{
 					xml = "<error>No metadata found for this layer.</error>";
 				}
-				responseProperties = "{\"Content-Type\" : \"text/xml\"}";
 			}
 			catch (NotImplementedException ex)
 			{
-				responseProperties = "{\"Content-Type\" : \"text/xml\"}";
 				xml = string.Format("<error>{0}</error>", ex.Message);
 			}
 
-		    return Encoding.UTF8.GetBytes(xml);
+			if (Regex.IsMatch(outputFormat, @"(?i)html?"))
+			{
+				// Transform to HTML using XSLT.
+				responseProperties = "{\"Content-Type\" : \"text/html\"}";
+				var xsltDoc = new XmlDocument();
+				xsltDoc.LoadXml(Resources.FgdcPlusHtml5);
+				var xForm = new XslCompiledTransform();
+				xForm.Load(xsltDoc);
+
+				var xmlDoc = new XmlDocument();
+				xmlDoc.LoadXml(xml);
+				var args = new XsltArgumentList();
+
+				byte[] bytes;
+				using (var memStream = new MemoryStream())
+				{
+					xForm.Transform(xmlDoc, args, memStream);
+					bytes = memStream.ToArray();
+				}
+				return bytes;
+			}
+			else // if (string.Compare(outputFormat, "xml", true) == 0)
+			{
+				responseProperties = "{\"Content-Type\" : \"text/xml\"}";
+				return Encoding.UTF8.GetBytes(xml);
+			}
+
 		}
 	}
 }
