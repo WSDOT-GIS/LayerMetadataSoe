@@ -23,7 +23,7 @@ This project is an ArcGIS Server Object Extension (SOE) that allows a map servic
 
 Note that in order to install the server object extension you must be an administrator on the ArcGIS Server.
 
-1.	Copy the contents of the bin folder to a location on the ArcGIS Server.
+1.	Copy the contents of the `bin` folder to a location on the ArcGIS Server.
 2.	Run `Register.cmd`. This will perform the COM registration.
 3.	Run `RegisterSOE.exe`. This will register the SOE with the ArcGIS Server.
 
@@ -31,32 +31,14 @@ Note that in order to install the server object extension you must be an adminis
 
 1.	Open up the ArcGIS Server manager page. The URL will be `http://<Your Server Name>/ArcGIS/Manager`.
 2.	Log in
-3.	Create a new map service or edit an existing map service definition. The map service must have LRS layers grouped by LRS year. See the example below.
+3.	Create a new map service or edit an existing map service definition.
 4.	In the capabilities tab, check the "Layer Metadata" capability
-
-#### Example layout ####
-* Current
-	* Increase
-	* Decrease
-	* Ramp
-*	2010
-	* Increase
-	* Decrease
-	* Ramp
-*	2009
-	* Increase
-	* Decrease
-	* Ramp
-*	2008
-	* Increase
-	* Decrease
-	* Ramp
 
 ## Uninstalling the SOE ##
 
 1.	Stop any map services that use the Layer Metadata server object extension.
-2.	Run the following command: `RegisterSOE.exe /u`
-3.	Run `Unregister.cmd`
+2.	Run `RegisterSOE.exe /u`.
+3.	Run `Unregister.cmd`.
 
 
 
