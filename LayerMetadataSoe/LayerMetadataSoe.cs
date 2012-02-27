@@ -27,8 +27,9 @@ namespace LayerMetadataSoe
 
 		private IServerObjectHelper2 _serverObjectHelper;
 
-		public Dictionary<int, string> Metadata { get; private set; }
-
+		/// <summary>
+		/// Creates a new instance of this class.
+		/// </summary>
 		public LayerMetadataSoe()
 		{
 			RestResource rootResource = CreateRestSchema();
@@ -36,6 +37,10 @@ namespace LayerMetadataSoe
 			_reqHandler = (IRESTRequestHandler)restImpl;
 		}
 
+		/// <summary>
+		/// Initializes global variables.
+		/// </summary>
+		/// <param name="pSOH"></param>
 		public void Init(IServerObjectHelper pSOH)
 		{
 			_serverObjectHelper = pSOH as IServerObjectHelper2;
@@ -45,6 +50,10 @@ namespace LayerMetadataSoe
 
 		public void Construct(IPropertySet props){}
 
+		/// <summary>
+		/// Creates the REST schema that lists what operations and resources are provided by this Server Object Extension.
+		/// </summary>
+		/// <returns>Returns a <see cref="RestResource"/> that lists what <see cref="RestOperation"/>s and <see cref="RestResource"/>s are provided by this SOE.</returns>
 		private RestResource CreateRestSchema()
 		{
 			RestResource soeResource = new RestResource("LayerMetadataSoe", false, RootSOE);
@@ -55,7 +64,7 @@ namespace LayerMetadataSoe
 
 			RestOperation getLayerMetadataOp = new RestOperation("getLayerMetadata",
 				new string[] { "layer" },
-				new string[] { "xml", "html" },
+				new string[] { "xml", "html", "json" },
 				GetMetadataForLayer
 				);
 
@@ -103,7 +112,7 @@ namespace LayerMetadataSoe
 			int layerID = Convert.ToInt32(boundVariables["metadataListID"]);
 
 			//execute
-			var xml = GetMetadataXml(ref responseProperties, layerID);
+			var xml = GetMetadataXml(layerID);
 
 			if (Regex.IsMatch(outputFormat, @"(?i)html?"))
 			{
@@ -111,9 +120,17 @@ namespace LayerMetadataSoe
 				responseProperties = "{\"Content-Type\" : \"text/html\"}";
 				return TransformToHtml(xml);
 			}
+			else if (string.Compare(outputFormat, "xml", true) == 0)
+			{
+				responseProperties = "{\"Content-Type\" : \"text/xml\"}";
+				return Encoding.UTF8.GetBytes(xml);
+			}
 			else
 			{
-				return Encoding.UTF8.GetBytes(xml);
+				responseProperties = "{\"Content-Type\" : \"application/json\"}";
+				JsonObject obj = new JsonObject();
+				obj.AddString("metadata", xml);
+				return Encoding.UTF8.GetBytes(obj.ToJson());
 			}
 		}
 
@@ -135,7 +152,7 @@ namespace LayerMetadataSoe
 			}
 			
 		    int layerIdInt = (int)layerId.Value;
-			string xml = GetMetadataXml(ref responseProperties, layerIdInt);
+			string xml = GetMetadataXml(layerIdInt);
 
 			if (Regex.IsMatch(outputFormat, @"(?i)html?"))
 			{
@@ -143,26 +160,45 @@ namespace LayerMetadataSoe
 				responseProperties = "{\"Content-Type\" : \"text/html\"}";
 				return TransformToHtml(xml);
 			}
-			else // if (string.Compare(outputFormat, "xml", true) == 0)
+			else if (string.Compare(outputFormat, "xml", true) == 0)
 			{
 				responseProperties = "{\"Content-Type\" : \"text/xml\"}";
 				return Encoding.UTF8.GetBytes(xml);
 			}
+			else
+			{
+				responseProperties = "{\"Content-Type\" : \"application/json\"}";
+				JsonObject obj = new JsonObject();
+				obj.AddString("metadata", xml);
+				return Encoding.UTF8.GetBytes(obj.ToJson());
+			}
 
 		}
 
+		/// <summary>
+		/// Returns a JSON serialized array listing all of the feature layers in the map service, converted to a byte array.
+		/// </summary>
+		/// <param name="boundVariables">Not used by this method, but required for method signature..</param>
+		/// <param name="outputFormat">The only supported format is "json".</param>
+		/// <param name="requestProperties">Not used by this method, but required for method signature.</param>
+		/// <param name="responseProperties">Not used by this method, but required for method signature</param>
+		/// <returns></returns>
 		private byte[] GetIdsOfLayersThatHaveMetadata(NameValueCollection boundVariables,
 			string outputFormat,
 			string requestProperties,
 			out string responseProperties)
 		{
-			responseProperties = "{\"Content-Type\" : \"application/json\"}";
+			responseProperties = null;
 			var idArray = GetIdsOfLayersThatHaveMetadata();
 			var serializer = new JavaScriptSerializer();
 			var json = serializer.Serialize(idArray);
 			return Encoding.UTF8.GetBytes(json);
 		}
 
+		/// <summary>
+		/// Returns an array of layer IDs.  This list of layer IDs correspond to Feature Layers.
+		/// </summary>
+		/// <returns>An array of layer ID <see cref="int"/>s.</returns>
 		private int[] GetIdsOfLayersThatHaveMetadata()
 		{
 			var mapServer = (IMapServer3)_serverObjectHelper.ServerObject;
@@ -182,20 +218,9 @@ namespace LayerMetadataSoe
 			}
 
 			return output.ToArray();
-
-
-			////var msDataAccess = (IMapServerDataAccess)_serverObjectHelper.ServerObject;
-			////IDataset layer = null;
-
-			////string xml = null;
-			////responseProperties = "{\"Content-Type\" : \"text/xml\"}";
-			////try
-			////{
-			////    layer = msDataAccess.GetDataSource(defaultMapName, layerId) as IDataset;
-			////}
 		}
 
-		private string GetMetadataXml(ref string responseProperties, int layerId)
+		private string GetMetadataXml(int layerId)
 		{
 			var mapServer = (IMapServer3)_serverObjectHelper.ServerObject;
 			string defaultMapName = mapServer.DefaultMapName;
@@ -206,7 +231,6 @@ namespace LayerMetadataSoe
 			IDataset layer = null;
 
 			string xml = null;
-			responseProperties = "{\"Content-Type\" : \"text/xml\"}";
 			try
 			{
 				layer = msDataAccess.GetDataSource(defaultMapName, layerId) as IDataset;
