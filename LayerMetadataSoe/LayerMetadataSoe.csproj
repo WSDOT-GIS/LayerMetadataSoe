@@ -8,8 +8,8 @@
     <ProjectGuid>{055416E1-BB40-4D51-B9A9-740C932EA59B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LayerMetadataSoe</RootNamespace>
-    <AssemblyName>LayerMetadataSoe</AssemblyName>
+    <RootNamespace>LayerMetadata</RootNamespace>
+    <AssemblyName>LayerMetadata</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
@@ -92,7 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LayerMetadataSoe.cs" />
+    <Compile Include="LayerMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -14,14 +14,17 @@ using ESRI.ArcGIS.esriSystem;
 using ESRI.ArcGIS.Geodatabase;
 using ESRI.ArcGIS.Server;
 using ESRI.ArcGIS.SOESupport;
-using LayerMetadataSoe.Properties;
+using LayerMetadata.Properties;
 
-namespace LayerMetadataSoe
+namespace LayerMetadata
 {
+	/// <summary>
+	/// A Server Object Extension (SOE) that allows a map service to publish metadata about its feature layers.
+	/// </summary>
 	[ComVisible(true)]
 	[Guid("5EEBE41B-6BE7-47FA-B655-31FE26C75562")]
 	[ClassInterface(ClassInterfaceType.None)]
-	public class LayerMetadataSoe : ServicedComponent, IServerObjectExtension, IObjectConstruct, IRESTRequestHandler
+	public class LayerMetadata : ServicedComponent, IServerObjectExtension, IObjectConstruct, IRESTRequestHandler
 	{
 		private IRESTRequestHandler _reqHandler;
 
@@ -30,10 +33,10 @@ namespace LayerMetadataSoe
 		/// <summary>
 		/// Creates a new instance of this class.
 		/// </summary>
-		public LayerMetadataSoe()
+		public LayerMetadata()
 		{
 			RestResource rootResource = CreateRestSchema();
-			SoeRestImpl restImpl = new SoeRestImpl("LayerMetadataSoe", rootResource);
+			SoeRestImpl restImpl = new SoeRestImpl("LayerMetadata", rootResource);
 			_reqHandler = (IRESTRequestHandler)restImpl;
 		}
 
@@ -56,13 +59,13 @@ namespace LayerMetadataSoe
 		/// <returns>Returns a <see cref="RestResource"/> that lists what <see cref="RestOperation"/>s and <see cref="RestResource"/>s are provided by this SOE.</returns>
 		private RestResource CreateRestSchema()
 		{
-			RestResource soeResource = new RestResource("LayerMetadataSoe", false, RootSOE);
+			RestResource soeResource = new RestResource("LayerMetadata", false, RootSOE);
 
-			RestResource metadataListResource = new RestResource("metadataList", true, GetMetadataList);
+			RestResource metadataListResource = new RestResource("metadata", true, GetMetadataList);
 
 			RestResource validLayersResource = new RestResource("validLayers", false, GetIdsOfLayersThatHaveMetadata);
 
-			RestOperation getLayerMetadataOp = new RestOperation("getLayerMetadata",
+			RestOperation getLayerMetadataOp = new RestOperation("getMetadata",
 				new string[] { "layer" },
 				new string[] { "xml", "html", "json" },
 				GetMetadataForLayer
@@ -102,14 +105,14 @@ namespace LayerMetadataSoe
 			return Encoding.UTF8.GetBytes(jObject.ToJson());
 		}
 
-		//metadataList/{metadataListID}
+		//metadata/{metadataListID}
 		//returns json with simplified layerinfo (name, id, extent)
 		private byte[] GetMetadataList(NameValueCollection boundVariables, string outputFormat, string requestProperties, out string responseProperties)
 		{
 			responseProperties = null;
 
 			//layerID
-			int layerID = Convert.ToInt32(boundVariables["metadataListID"]);
+			int layerID = Convert.ToInt32(boundVariables["metadataID"]);
 
 			//execute
 			var xml = GetMetadataXml(layerID);

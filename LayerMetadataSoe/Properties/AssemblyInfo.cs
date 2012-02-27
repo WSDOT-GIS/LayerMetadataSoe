@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LayerMetadataSoe")]
+[assembly: AssemblyTitle("LayerMetadata")]
 [assembly: AssemblyDescription("A server object extension for ArcGIS Server that provides access to the metadata of a map services' layers.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Washington State Department of Transportation")]
-[assembly: AssemblyProduct("LayerMetadataSoe")]
+[assembly: AssemblyProduct("LayerMetadata")]
 [assembly: AssemblyCopyright("Copyright © WSDOT 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
