@@ -12,7 +12,7 @@ This project is an ArcGIS Server Object Extension (SOE) that allows a map servic
 ### Requirements ###
 
 * Microsoft Visual Studio 2010.
-* ArcGIS ArcObjects SDK.
+* ArcGIS ArcObjects SDK (for ArcGIS version 10 or higher).
 
 ### Instructions ###
 
@@ -45,32 +45,32 @@ Note that in order to install the server object extension you must be an adminis
 ### validLayers ###
 Retrieves a an array of of layer ids.
 
-http://*myserver*/ArcGIS/rest/services/*MyMap*/MapServer/exts/LayerMetadataSoe/validLayers?f=json
+http://*myserver*/ArcGIS/rest/services/*MyMap*/MapServer/exts/LayerMetadata/validLayers?f=json
 
 #### Parameters ####
 * f: Options are `json` and `pjson`.
 
-### metadataList ###
+### metadata ###
 
 Retrieves the metadata document for the specified layer.
 
-http://*myserver*/ArcGis/rest/services/*MyMap*/MapServer/exts/LayerMetadataSoe/metadataList/__layerId__/?f=__format__
+http://*myserver*/ArcGis/rest/services/*MyMap*/MapServer/exts/LayerMetadata/metadata/__layerId__/?f=__format__
 
 #### Parameters ####
 * layerId: An integer corresponding to a feature layer ID in the map service.
 * f: The output format.  Valid options are `xml` and `html`.
 
-### getLayerMetadata ###
+### getMetadata ###
 Retrieves the metadata document for the specified layer.
 
-http://*myserver*/ArcGIS/rest/services/*MyMap*/MapServer/exts/LayerMetadataSoe/getLayerMetadata?layer=__layer__&f=__format__
+http://*myserver*/ArcGIS/rest/services/*MyMap*/MapServer/exts/LayerMetadata/getMetadata?layer=__layer__&f=__format__
 #### Parameters ####
 * layer: An integer corresponding to a feature layer ID in the map service.
 * f: The output format.  Valid options are `xml` and `html`.
 
 ## Projects ##
 
-### LayerMetadataSoe ###
+### LayerMetadata ###
 
 This project is the actual Server Object Extension (SOE).
 
