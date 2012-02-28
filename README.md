@@ -3,7 +3,7 @@
 This project is an ArcGIS Server Object Extension (SOE) that allows a map service to publish the metadata for its individual layers to the user.
 
 ## License ##
-This program is licensed under the [MIT license] (http://www.opensource.org/licenses/MIT)
+This program is licensed under the [MIT license](http://www.opensource.org/licenses/MIT)
 
 ## Prerequisites ##
 
@@ -67,6 +67,7 @@ http://*YourServer*/ArcGis/rest/services/*YourMap*/MapServer/exts/LayerMetadata/
 Retrieves the metadata document for the specified layer.
 
 http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/getMetadata?layer=__layer__&f=__format__
+
 #### Parameters ####
 * layer: An integer corresponding to a feature layer ID in the map service.
 * f: The output format.  Valid options are `xml` and `html`.
