@@ -2,6 +2,9 @@
 
 This project is an ArcGIS Server Object Extension (SOE) that allows a map service to publish the metadata for its individual layers to the user.
 
+## License ##
+This program is licensed under the [MIT license] (http://www.opensource.org/licenses/MIT)
+
 ## Prerequisites ##
 
 * ArcGIS Server
@@ -45,7 +48,7 @@ Note that in order to install the server object extension you must be an adminis
 ### validLayers ###
 Retrieves a an array of of layer ids.
 
-http://*myserver*/ArcGIS/rest/services/*MyMap*/MapServer/exts/LayerMetadata/validLayers?f=json
+http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/validLayers?f=json
 
 #### Parameters ####
 * f: Options are `json` and `pjson`.
@@ -54,7 +57,7 @@ http://*myserver*/ArcGIS/rest/services/*MyMap*/MapServer/exts/LayerMetadata/vali
 
 Retrieves the metadata document for the specified layer.
 
-http://*myserver*/ArcGis/rest/services/*MyMap*/MapServer/exts/LayerMetadata/metadata/__layerId__/?f=__format__
+http://*YourServer*/ArcGis/rest/services/*YourMap*/MapServer/exts/LayerMetadata/metadata/__layerId__/?f=__format__
 
 #### Parameters ####
 * layerId: An integer corresponding to a feature layer ID in the map service.
@@ -63,7 +66,7 @@ http://*myserver*/ArcGis/rest/services/*MyMap*/MapServer/exts/LayerMetadata/meta
 ### getMetadata ###
 Retrieves the metadata document for the specified layer.
 
-http://*myserver*/ArcGIS/rest/services/*MyMap*/MapServer/exts/LayerMetadata/getMetadata?layer=__layer__&f=__format__
+http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/getMetadata?layer=__layer__&f=__format__
 #### Parameters ####
 * layer: An integer corresponding to a feature layer ID in the map service.
 * f: The output format.  Valid options are `xml` and `html`.
@@ -78,6 +81,13 @@ This project is the actual Server Object Extension (SOE).
 
 This program is used to register an SOE with ArcGIS Server.  It can work with any ArcGIS Server SOE assembly provided you change the application configuration file.
 
+## Troubleshooting ##
+
+### I have registered the SOE, but it is not showing up in the list of capabilities in ArcGIS Server Manager.  It does show up in ArcCatalog, though. ###
+
+Restart IIS on the ArcGIS Server.
+
+
 ## F. A. Q. ##
 
 ### ArcGIS Server 10.1 is going to have metadata capabilities.  Aren't you wasting your time writing this? ###
@@ -85,6 +95,3 @@ This program is used to register an SOE with ArcGIS Server.  It can work with an
 After looking at a beta ArcGIS Server 10.1 server and examining its map services, it appears that version 10.1 only adds the ability to publish a single metadata document per map service.
 
 What this SOE will do is pubish one metadata document for each LAYER in a map service.
-
-## License ##
-This program is licensed under the [MIT license] (http://www.opensource.org/licenses/MIT)
