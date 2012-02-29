@@ -26,7 +26,7 @@ This program is licensed under the [MIT license](http://www.opensource.org/licen
 
 Note that in order to install the server object extension you must be an administrator on the ArcGIS Server.
 
-1.	Copy the contents of the `bin` folder to a location on the ArcGIS Server.
+1.  Copy the contents of the `bin` folder to a location on the ArcGIS Server.
 2.	Run `Register.cmd`. This will perform the COM registration.
 3.	Run `RegisterSOE.exe`. This will register the SOE with the ArcGIS Server.
 
@@ -81,6 +81,25 @@ This project is the actual Server Object Extension (SOE).
 ### RegisterSOE ###
 
 This program is used to register an SOE with ArcGIS Server.  It can work with any ArcGIS Server SOE assembly provided you change the application configuration file.
+
+### LayerMetadataClient ###
+
+This project contains extensions to the [ArcGIS JavaScript API](http://links.esri.com/javascript) layer classes that allow them to call the Layer Metadata SOE.
+
+#### metadataExtensions.js ####
+
+This JavaScript file extends the layer classes to add methods for calling the Layer Metadata SOE.
+
+#### unittest.html ####
+
+QUnit unit test for metadataExtensions.
+
+
+##### Unit Test Setup #####
+
+1. Copy `unittest.js.sample` to `unittest.js`.  (`unittest.js` is in the `.gitignore` file, so it will not be pushed to the repository.)
+2. Modify the url variable in `unittest.js` so that it points to a map service that has the _Layer Metadata_ capability enabled.
+
 
 ## Troubleshooting ##
 
