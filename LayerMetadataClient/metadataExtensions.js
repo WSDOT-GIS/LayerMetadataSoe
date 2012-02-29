@@ -1,6 +1,6 @@
 /*globals dojo, esri */
 
-// Copyright ©2012 Washington State Department of Transportation (WSDOT).  Licensed under the MIT license (http://opensource.org/licenses/MIT).
+// Copyright ©2012 Washington State Department of Transportation (WSDOT).  Released under the MIT license (http://opensource.org/licenses/MIT).
 
 /**
  * This JS file extends the esri.layer.Layers class to provide functions that work with WSDOT's Layer Metadata Server Object Extension (SOE).
@@ -77,17 +77,26 @@
 		return output;
 	}
 
+	/**
+	 * Calls the SOE to get the list of layer IDs that correspond to feature layers. 
+	 * @param {String|esri.layers.Layer} layer Either a map service or map service layer URL, or an esri.layers.Layer object.
+	 * @param {Function} Event handler function that is called when the query is successful.  Parameter "data" is an array of integers.
+	 * @param {Function} Event handler function that is called when the query fails.  Parameter "error" is an Error.
+	 */
 	function getIdsOfLayersWithMetadata(layer, successHandler, failHandler) {
-		var url, jsonpArgs;
+		var jsonpArgs;
 		try {
 			jsonpArgs = {
-				url: url,
+				url: getValidLayersUrl(layer),
 				callbackParamName: "callback",
 				content: {
 					"f": "json"
 				},
 				load: function (data) {
-					if (typeof (successHandler) === "function") {
+					if (typeof(data.error) !== "undefined" && typeof(failHandler) === "function") {
+						failHandler(data.error);
+					}
+					else if (typeof (successHandler) === "function") {
 						successHandler(data);
 					}
 				},
@@ -97,7 +106,6 @@
 					}
 				}
 			};
-			url = getValidLayersUrl(layer);
 			return dojo.io.script.get(jsonpArgs);
 		} catch (err) {
 			if (failHandler) {
