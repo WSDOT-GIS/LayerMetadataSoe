@@ -82,6 +82,23 @@ This project is the actual Server Object Extension (SOE).
 
 This program is used to register an SOE with ArcGIS Server.  It can work with any ArcGIS Server SOE assembly provided you change the application configuration file.
 
+### LayerMetadataClient ###
+
+#### metadataExtensions.js ####
+
+This JavaScript file extends the layer classes to add methods for calling the Layer Metadata SOE.
+
+#### unittest.html ####
+
+QUnit unit test for metadataExtensions.
+
+
+##### Unit Test Setup #####
+
+1. Copy `sample.unittest.js` to `unittest.js`.  (`unittest.js` is in the `.gitignore` file, so it will not be pushed to the repository.)
+2. Modify the url variable in `unittest.js` so that it points to a map service that has the _Layer Metadata_ capability enabled.
+
+
 ## Troubleshooting ##
 
 ### I have registered the SOE, but it is not showing up in the list of capabilities in ArcGIS Server Manager.  It does show up in ArcCatalog, though. ###

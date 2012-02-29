@@ -43,6 +43,8 @@
 			throw new Error("Invalid layer URL format.");
 		}
 	}
+	
+	esri.layers.getMapServerUrl = getMapServerUrl;
 
 	/**
 	 * Given an esri.layers.Layer object or a layer URL, returns the URL for a query to the Layer Metadata SOE for a list of valid layer IDs. 
@@ -53,6 +55,8 @@
 		var url = getMapServerUrl(layer); // This will throw an Error if it fails.
 		return url.mapServerUrl +  "/exts/LayerMetadata/validLayers";
 	}
+	
+	esri.layers.getLayersWithMetadataUrl = getValidLayersUrl;
 
 	/**
 	 * Returns the Layer Metadata SOE URL to retrieve the metadata for a map service feature layer.
@@ -76,6 +80,8 @@
 
 		return output;
 	}
+	
+	esri.layers.getMetadataUrl = getMetadataUrl;
 
 	/**
 	 * Calls the SOE to get the list of layer IDs that correspond to feature layers. 
@@ -113,6 +119,8 @@
 			}
 		}
 	}
+	
+	esri.layers.getIdsOfLayersWithMetadata = getIdsOfLayersWithMetadata;
 
 	function addExtensions() {
 		var i, l, ctor, f, multiLayerClasses = [esri.layers.DynamicMapServiceLayer, esri.layers.ArcGISTiledMapServiceLayer];
