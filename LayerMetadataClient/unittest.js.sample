@@ -1,10 +1,15 @@
 /*globals jQuery, dojo, esri, test, equal, module, notEqual, start, ok, raises, asyncTest */
+
+/**
+* Make a copy of this file called unittest.js and modify the URLs to match those of the web service you will be testing with.
+*/
+
 (function($) {
 	"use strict";
 	
 	var mapServiceUrl, featureLayerUrl;
-	mapServiceUrl = "http://hqolymgis21t/ArcGIS/rest/services/Shared/CityLimits/MapServer";
-	featureLayerUrl = "http://hqolymgis21t/ArcGIS/rest/services/Shared/CityLimits/MapServer/0";
+	mapServiceUrl = "http://yourServer/ArcGIS/rest/services/YourService/MapServer";
+	featureLayerUrl = "http://yourServer/ArcGIS/rest/services/YourService/MapServer/0";
 	
 	function performTests() {
 		module("URL tests");
