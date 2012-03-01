@@ -1,3 +1,4 @@
+/*jslint white:true */
 /*globals dojo, esri */
 
 // Copyright ©2012 Washington State Department of Transportation (WSDOT).  Released under the MIT license (http://opensource.org/licenses/MIT).
@@ -180,11 +181,11 @@
 		f = function (layerId, format) {
 			return getMetadataUrl(this, layerId, format);
 		};
-		f2 = function() {
+		f2 = function () {
 			return getMetadataSoeRootUrl(this);
 		};
 		
-		f3 = function(successHandler, failHandler) {
+		f3 = function (successHandler, failHandler) {
 			return supportsMetadata(this, successHandler, failHandler);
 		};
 
@@ -197,7 +198,7 @@
 			});
 		}
 		
-		f = function(format) {
+		f = function (format) {
 			return getMetadataUrl(this, null, format);
 		};
 		
