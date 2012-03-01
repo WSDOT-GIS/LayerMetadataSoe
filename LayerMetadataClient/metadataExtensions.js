@@ -54,7 +54,6 @@
 	function getMetadataSoeRootUrl(layer) {
 		var output, url = getMapServerUrl(layer); // This will throw an Error if it fails.
 		output = url.mapServerUrl +  "/exts/LayerMetadata";
-		console.debug(output);
 		return output;
 	}
 	
