@@ -10,7 +10,7 @@
 (function (dojo, esri) {
 	"use strict";
 
-	var layerUrlRe = /([\w\d\/\:%]+\/MapServer)(?:\/(\d*))?\/?$/i; // Match results: [full url, map server url, layer id]
+	var layerUrlRe = /([\w\d\/\:%\.]+\/MapServer)(?:\/(\d*))?\/?$/i; // Match results: [full url, map server url, layer id]
 
 	/**
 	 * Examines a layer (or a layer URL) and returns the map service url and layer id parts as properties in the returned object.
@@ -45,6 +45,20 @@
 	}
 	
 	esri.layers.getMapServerUrl = getMapServerUrl;
+	
+	/**
+	 * Given an esri.layers.Layer object or a layer URL, returns the URL for a query to the Layer Metadata SOE root page. 
+	 * @param {String|esri.layers.Layer} layer Either a map service or map service layer URL, or an esri.layers.Layer object.
+	 * @returns {String} The URL to the SOE root. 
+	 */
+	function getMetadataSoeRootUrl(layer) {
+		var output, url = getMapServerUrl(layer); // This will throw an Error if it fails.
+		output = url.mapServerUrl +  "/exts/LayerMetadata";
+		console.debug(output);
+		return output;
+	}
+	
+	esri.layers.getMetadataSoeRootUrl = getMetadataSoeRootUrl;
 
 	/**
 	 * Given an esri.layers.Layer object or a layer URL, returns the URL for a query to the Layer Metadata SOE for a list of valid layer IDs. 
@@ -121,9 +135,42 @@
 	}
 	
 	esri.layers.getIdsOfLayersWithMetadata = getIdsOfLayersWithMetadata;
+	
+	function supportsMetadata(layer, successHandler, failHandler) {
+		var jsonpArgs;
+		try {
+			jsonpArgs = {
+				url: getMetadataSoeRootUrl(layer),
+				callbackParamName: "callback",
+				content: {
+					"f": "json"
+				},
+				load: function (data) {
+					if (typeof(data.error) !== "undefined" && typeof(failHandler) === "function") {
+						failHandler(data.error);
+					}
+					else if (typeof (successHandler) === "function") {
+						successHandler(data);
+					}
+				},
+				error: function (error) {
+					if (typeof (failHandler) === "function") {
+						failHandler(error);
+					}
+				}
+			};
+			return dojo.io.script.get(jsonpArgs);
+		} catch (err) {
+			if (failHandler) {
+				failHandler(err);
+			}
+		}
+	}
+	
+	esri.layers.supportsMetadata = supportsMetadata;
 
 	function addExtensions() {
-		var i, l, ctor, f, multiLayerClasses = [esri.layers.DynamicMapServiceLayer, esri.layers.ArcGISTiledMapServiceLayer];
+		var i, l, ctor, f, f2, f3, multiLayerClasses = [esri.layers.DynamicMapServiceLayer, esri.layers.ArcGISTiledMapServiceLayer];
 
 		dojo.extend(esri.layers.Layer, {
 			getIdsOfLayersWithMetadata: function (successHandler, failHandler) {
@@ -134,11 +181,20 @@
 		f = function (layerId, format) {
 			return getMetadataUrl(this, layerId, format);
 		};
+		f2 = function() {
+			return getMetadataSoeRootUrl(this);
+		};
+		
+		f3 = function(successHandler, failHandler) {
+			return supportsMetadata(this, successHandler, failHandler);
+		};
 
 		for (i = 0, l = multiLayerClasses.length; i < l; i += 1) {
 			ctor = multiLayerClasses[i];
 			dojo.extend(ctor, {
-				getMetadataUrl: f
+				getMetadataUrl: f,
+				getMetadataSoeRootUrl: f2,
+				supportsMetadata: f3
 			});
 		}
 		
