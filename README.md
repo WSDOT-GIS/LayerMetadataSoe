@@ -115,3 +115,13 @@ Restart IIS on the ArcGIS Server.
 After looking at a beta ArcGIS Server 10.1 server and examining its map services, it appears that version 10.1 only adds the ability to publish a single metadata document per map service.
 
 What this SOE will do is pubish one metadata document for each LAYER in a map service.
+
+### When calling the _validLayers_ endpoint without specifying an _f_ parameter, the page says, "The server did not generate valid JSON".  Why haven't you fixed this? ###
+
+In this situation you will recieve a message similar to this one
+
+    Note: The server did not generate valid JSON. Here's the response generated:
+
+    [0,1,2]
+
+Well, `[0,1,2]` __is__ a valid JSON array.  (You can even check with [JSONLint](http://jsonlint.com/) if you don't believe me.)
