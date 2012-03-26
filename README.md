@@ -48,7 +48,15 @@ Note that in order to install the server object extension you must be an adminis
 ### validLayers ###
 Retrieves a an array of of layer ids.
 
-http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/validLayers?f=json
+http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/validLayers?f=__format__
+
+#### Parameters ####
+* f: Options are `json` and `pjson`.
+
+### layerSources ###
+Retrieves a grouped list of layer IDs.  The output will have one property corresponding to each unique data source (feature class).  The value of each property is an array of integers corresponding to all of the layer IDs that share that data source.
+
+http://*YourServer*/ArcGIS/rest/services/Shared/*YourMap*/MapServer/exts/LayerMetadata/layerSources?f=__format__
 
 #### Parameters ####
 * f: Options are `json` and `pjson`.
