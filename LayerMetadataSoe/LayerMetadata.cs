@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.EnterpriseServices;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -15,6 +16,7 @@ using ESRI.ArcGIS.Geodatabase;
 using ESRI.ArcGIS.Server;
 using ESRI.ArcGIS.SOESupport;
 using LayerMetadata.Properties;
+using Wsdot.ArcObjects.Extensions;
 
 namespace LayerMetadata
 {
@@ -65,16 +67,20 @@ namespace LayerMetadata
 
 			RestResource validLayersResource = new RestResource("validLayers", false, GetIdsOfLayersThatHaveMetadata);
 
+			RestResource layerSources = new RestResource("layerSources", false, GetLayerSourceDict);
+
 			RestOperation getLayerMetadataOp = new RestOperation("getMetadata",
 				new string[] { "layer" },
 				new string[] { "xml", "html", "json" },
 				GetMetadataForLayer
 				);
 
-			soeResource.operations.Add(getLayerMetadataOp);
-
 			soeResource.resources.Add(validLayersResource);
 			soeResource.resources.Add(metadataListResource);
+			soeResource.resources.Add(layerSources);
+
+			soeResource.operations.Add(getLayerMetadataOp);
+
 			
 			return soeResource;
 		}
@@ -198,6 +204,18 @@ namespace LayerMetadata
 			return Encoding.UTF8.GetBytes(json);
 		}
 
+		private byte[] GetLayerSourceDict(NameValueCollection boundVariables,
+			string outputFormat,
+			string requestProperties,
+			out string responseProperties)
+		{
+			responseProperties = null;
+			var dict = GetDistinctDataSourceInfo();
+			var serializer = new JavaScriptSerializer();
+			var json = serializer.Serialize(dict);
+			return Encoding.UTF8.GetBytes(json);
+		}
+
 		/// <summary>
 		/// Returns an array of layer IDs.  This list of layer IDs correspond to Feature Layers.
 		/// </summary>
@@ -209,6 +227,7 @@ namespace LayerMetadata
 
 			IMapServerInfo3 serverInfo = mapServer.GetServerInfo(defaultMapName) as IMapServerInfo3;
 			IMapLayerInfos mapLayerInfos = serverInfo.MapLayerInfos;
+
 			IMapLayerInfo3 layerInfo = null;
 			var output = new List<int>(mapLayerInfos.Count);
 			for (int i = 0; i < mapLayerInfos.Count; i++)
@@ -220,7 +239,37 @@ namespace LayerMetadata
 				}
 			}
 
+			// Untested.
+			////var output = from layerInfo in mapLayerInfos.AsEnumerable()
+			////             where layerInfo.IsFeatureLayer
+			////             select layerInfo.ID;
+
 			return output.ToArray();
+		}
+
+		/// <summary>
+		/// Returns a dictionary of feature layer IDs keyed by data source names.
+		/// </summary>
+		/// <returns>Returns a dictionary of feature layer IDs keyed by data source names.</returns>
+		private Dictionary<string, List<int>> GetDistinctDataSourceInfo()
+		{
+			var mapServer = (IMapServer3)_serverObjectHelper.ServerObject;
+			string defaultMapName = mapServer.DefaultMapName;
+
+			var msDataAccess = (IMapServerDataAccess)_serverObjectHelper.ServerObject;
+
+			IMapServerInfo3 serverInfo = mapServer.GetServerInfo(defaultMapName) as IMapServerInfo3;
+			IMapLayerInfos mapLayerInfos = serverInfo.MapLayerInfos;
+
+			var output = (from layerInfo in mapLayerInfos.AsEnumerable()
+							where layerInfo.IsFeatureLayer
+							select new
+							{
+								Id = layerInfo.ID,
+								DataSource = ((IDataset)msDataAccess.GetDataSource(defaultMapName, layerInfo.ID)).Name
+							}).GroupBy(a => a.DataSource, a => a.Id).ToDictionary(g => g.Key, g => g.ToList());
+
+			return output;
 		}
 
 		private string GetMetadataXml(int layerId)
