@@ -7,7 +7,7 @@ This program is licensed under the [MIT license](http://www.opensource.org/licen
 
 ## Prerequisites ##
 
-* ArcGIS Server
+* ArcGIS Server 10.0.  (Not yet tested with ArcGIS Server 10.1.  Since the SOE registration process was completely changed between 10.0 and 10.1, it is very possible that this SOE will not be compatible with 10.1.)
 * Microsoft .NET Framework 3.5
 
 ## Compilation ##
