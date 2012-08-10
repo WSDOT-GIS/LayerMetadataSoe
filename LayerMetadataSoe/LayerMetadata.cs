@@ -1,67 +1,106 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.EnterpriseServices;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Web.Script.Serialization;
+
+using System.Collections.Specialized;
+
+using System.Runtime.InteropServices;
+
+using ESRI.ArcGIS.esriSystem;
+using ESRI.ArcGIS.Server;
+using ESRI.ArcGIS.Geometry;
+using ESRI.ArcGIS.Geodatabase;
+using ESRI.ArcGIS.Carto;
+using ESRI.ArcGIS.SOESupport;
 using System.Xml;
 using System.Xml.Xsl;
-using ESRI.ArcGIS.Carto;
-using ESRI.ArcGIS.esriSystem;
-using ESRI.ArcGIS.Geodatabase;
-using ESRI.ArcGIS.Server;
-using ESRI.ArcGIS.SOESupport;
-using LayerMetadata.Properties;
+using System.IO;
+using System.Web.Script.Serialization;
+using System.Text.RegularExpressions;
 using Wsdot.ArcObjects.Extensions;
+using LayerMetadata.Properties;
+
+
+//TODO: sign the project (project properties > signing tab > sign the assembly)
+//      this is strongly suggested if the dll will be registered using regasm.exe <your>.dll /codebase
+
 
 namespace LayerMetadata
 {
-	/// <summary>
-	/// A Server Object Extension (SOE) that allows a map service to publish metadata about its feature layers.
-	/// </summary>
 	[ComVisible(true)]
-	[Guid("5EEBE41B-6BE7-47FA-B655-31FE26C75562")]
+	[Guid("98a173ea-63f3-4a71-ad83-2568a43cd9df")]
 	[ClassInterface(ClassInterfaceType.None)]
-	public class LayerMetadata : ServicedComponent, IServerObjectExtension, IObjectConstruct, IRESTRequestHandler
+	[ServerObjectExtension("MapServer",
+		AllCapabilities = "",
+		DefaultCapabilities = "",
+		Description = "Provides a map service with the ability to export the metadata associated with its layers.",
+		DisplayName = "Layer Metadata",
+		Properties = "",
+		SupportsREST = true,
+		SupportsSOAP = false)]
+	public class LayerMetadata : IServerObjectExtension, IObjectConstruct, IRESTRequestHandler
 	{
+		private string _soe_name;
+
+		private IPropertySet _configProps;
+		private IServerObjectHelper _serverObjectHelper;
+		private ServerLogger _logger;
 		private IRESTRequestHandler _reqHandler;
 
-		private IServerObjectHelper2 _serverObjectHelper;
-
-		/// <summary>
-		/// Creates a new instance of this class.
-		/// </summary>
 		public LayerMetadata()
 		{
-			RestResource rootResource = CreateRestSchema();
-			SoeRestImpl restImpl = new SoeRestImpl("LayerMetadata", rootResource);
-			_reqHandler = (IRESTRequestHandler)restImpl;
+			_soe_name = this.GetType().Name;
+			_logger = new ServerLogger();
+			_reqHandler = new SoeRestImpl(_soe_name, CreateRestSchema()) as IRESTRequestHandler;
 		}
 
-		/// <summary>
-		/// Initializes global variables.
-		/// </summary>
-		/// <param name="pSOH"></param>
+		#region IServerObjectExtension Members
+
 		public void Init(IServerObjectHelper pSOH)
 		{
-			_serverObjectHelper = pSOH as IServerObjectHelper2;
+			_serverObjectHelper = pSOH;
 		}
 
-		public void Shutdown(){}
+		public void Shutdown()
+		{
+		}
 
-		public void Construct(IPropertySet props){}
+		#endregion
 
-		/// <summary>
-		/// Creates the REST schema that lists what operations and resources are provided by this Server Object Extension.
-		/// </summary>
-		/// <returns>Returns a <see cref="RestResource"/> that lists what <see cref="RestOperation"/>s and <see cref="RestResource"/>s are provided by this SOE.</returns>
+		#region IObjectConstruct Members
+
+		public void Construct(IPropertySet props)
+		{
+			_configProps = props;
+		}
+
+		#endregion
+
+		#region IRESTRequestHandler Members
+
+		public string GetSchema()
+		{
+			return _reqHandler.GetSchema();
+		}
+
+		public byte[] HandleRESTRequest(string Capabilities, string resourceName, string operationName, string operationInput, string outputFormat, string requestProperties, out string responseProperties)
+		{
+			return _reqHandler.HandleRESTRequest(Capabilities, resourceName, operationName, operationInput, outputFormat, requestProperties, out responseProperties);
+		}
+
+		#endregion
+
 		private RestResource CreateRestSchema()
 		{
-			RestResource soeResource = new RestResource("LayerMetadata", false, RootSOE);
+			RestResource rootRes = new RestResource(_soe_name, false, RootResHandler);
+
+			////RestOperation sampleOper = new RestOperation("sampleOperation",
+			////                                          new string[] { "parm1", "parm2" },
+			////                                          new string[] { "json" },
+			////                                          SampleOperHandler);
+
+			////rootRes.operations.Add(sampleOper);
 
 			RestResource metadataListResource = new RestResource("metadata", true, GetMetadataList);
 
@@ -75,41 +114,49 @@ namespace LayerMetadata
 				GetMetadataForLayer
 				);
 
-			soeResource.resources.Add(validLayersResource);
-			soeResource.resources.Add(metadataListResource);
-			soeResource.resources.Add(layerSources);
+			rootRes.resources.Add(validLayersResource);
+			rootRes.resources.Add(metadataListResource);
+			rootRes.resources.Add(layerSources);
 
-			soeResource.operations.Add(getLayerMetadataOp);
+			rootRes.operations.Add(getLayerMetadataOp);
 
-			
-			return soeResource;
+			return rootRes;
 		}
 
-		public string GetSchema()
-		{
-			return _reqHandler.GetSchema();
-		}
-
-		byte[] IRESTRequestHandler.HandleRESTRequest(string Capabilities, 
-			string resourceName, 
-			string operationName, 
-			string operationInput, 
-			string outputFormat, 
-			string requestProperties, 
-			out string responseProperties)
-		{
-			return _reqHandler.HandleRESTRequest(Capabilities, resourceName, operationName, operationInput, outputFormat, requestProperties, out responseProperties);
-		}
-
-		private byte[] RootSOE(NameValueCollection boundVariables, 
-			string outputFormat,
-			string requestProperties, 
-			out string responseProperties)
+		private byte[] RootResHandler(NameValueCollection boundVariables, string outputFormat, string requestProperties, out string responseProperties)
 		{
 			responseProperties = null;
-			JsonObject jObject = new JsonObject();
-			return Encoding.UTF8.GetBytes(jObject.ToJson());
+
+			JsonObject result = new JsonObject();
+			////result.AddString("hello", "world");
+
+			return Encoding.UTF8.GetBytes(result.ToJson());
 		}
+
+		////private byte[] SampleOperHandler(NameValueCollection boundVariables,
+		////                                          JsonObject operationInput,
+		////                                              string outputFormat,
+		////                                              string requestProperties,
+		////                                          out string responseProperties)
+		////{
+		////    responseProperties = null;
+
+		////    string parm1Value;
+		////    bool found = operationInput.TryGetString("parm1", out parm1Value);
+		////    if (!found || string.IsNullOrEmpty(parm1Value))
+		////        throw new ArgumentNullException("parm1");
+
+		////    string parm2Value;
+		////    found = operationInput.TryGetString("parm2", out parm2Value);
+		////    if (!found || string.IsNullOrEmpty(parm2Value))
+		////        throw new ArgumentNullException("parm2");
+
+		////    JsonObject result = new JsonObject();
+		////    result.AddString("parm1", parm1Value);
+		////    result.AddString("parm2", parm2Value);
+
+		////    return Encoding.UTF8.GetBytes(result.ToJson());
+		////}
 
 		//metadata/{metadataListID}
 		//returns json with simplified layerinfo (name, id, extent)
@@ -152,15 +199,15 @@ namespace LayerMetadata
 			responseProperties = null;
 
 			long? layerId;
-			
+
 
 			// Throw an exception if a layer ID value was not provided.
 			if (!operationInput.TryGetAsLong("layer", out layerId))
 			{
 				throw new ArgumentNullException("layer", "The \"layer\" parameter cannot be null.");
 			}
-			
-		    int layerIdInt = (int)layerId.Value;
+
+			int layerIdInt = (int)layerId.Value;
 			string xml = GetMetadataXml(layerIdInt);
 
 			if (Regex.IsMatch(outputFormat, @"(?i)html?"))
@@ -199,9 +246,9 @@ namespace LayerMetadata
 		{
 			responseProperties = null;
 			var idArray = GetIdsOfLayersThatHaveMetadata();
-			var serializer = new JavaScriptSerializer();
-			var json = serializer.Serialize(idArray);
-			return Encoding.UTF8.GetBytes(json);
+			JsonObject output = new JsonObject();
+			output.AddArray("layerIds", idArray.Select(i => i as object).ToArray());
+			return Encoding.UTF8.GetBytes(output.ToJson());
 		}
 
 		private byte[] GetLayerSourceDict(NameValueCollection boundVariables,
@@ -262,12 +309,12 @@ namespace LayerMetadata
 			IMapLayerInfos mapLayerInfos = serverInfo.MapLayerInfos;
 
 			var output = (from layerInfo in mapLayerInfos.AsEnumerable()
-							where layerInfo.IsFeatureLayer
-							select new
-							{
-								Id = layerInfo.ID,
-								DataSource = ((IDataset)msDataAccess.GetDataSource(defaultMapName, layerInfo.ID)).Name
-							}).GroupBy(a => a.DataSource, a => a.Id).ToDictionary(g => g.Key, g => g.ToList());
+						  where layerInfo.IsFeatureLayer
+						  select new
+						  {
+							  Id = layerInfo.ID,
+							  DataSource = ((IDataset)msDataAccess.GetDataSource(defaultMapName, layerInfo.ID)).Name
+						  }).GroupBy(a => a.DataSource, a => a.Id).ToDictionary(g => g.Key, g => g.ToList());
 
 			return output;
 		}
@@ -354,5 +401,6 @@ namespace LayerMetadata
 			}
 			return bytes;
 		}
+
 	}
 }
