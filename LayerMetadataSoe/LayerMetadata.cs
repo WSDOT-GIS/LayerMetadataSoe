@@ -59,6 +59,9 @@ namespace LayerMetadata
 
 		public void Init(IServerObjectHelper pSOH)
 		{
+////#if DEBUG
+////            System.Diagnostics.Debugger.Launch();
+////#endif
 			_serverObjectHelper = pSOH;
 		}
 
@@ -132,31 +135,6 @@ namespace LayerMetadata
 
 			return Encoding.UTF8.GetBytes(result.ToJson());
 		}
-
-		////private byte[] SampleOperHandler(NameValueCollection boundVariables,
-		////                                          JsonObject operationInput,
-		////                                              string outputFormat,
-		////                                              string requestProperties,
-		////                                          out string responseProperties)
-		////{
-		////    responseProperties = null;
-
-		////    string parm1Value;
-		////    bool found = operationInput.TryGetString("parm1", out parm1Value);
-		////    if (!found || string.IsNullOrEmpty(parm1Value))
-		////        throw new ArgumentNullException("parm1");
-
-		////    string parm2Value;
-		////    found = operationInput.TryGetString("parm2", out parm2Value);
-		////    if (!found || string.IsNullOrEmpty(parm2Value))
-		////        throw new ArgumentNullException("parm2");
-
-		////    JsonObject result = new JsonObject();
-		////    result.AddString("parm1", parm1Value);
-		////    result.AddString("parm2", parm2Value);
-
-		////    return Encoding.UTF8.GetBytes(result.ToJson());
-		////}
 
 		//metadata/{metadataListID}
 		//returns json with simplified layerinfo (name, id, extent)
