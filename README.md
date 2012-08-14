@@ -7,7 +7,7 @@ This program is licensed under the [MIT license](http://www.opensource.org/licen
 
 ## Prerequisites ##
 
-* ArcGIS Server 10.0.  (Not yet tested with ArcGIS Server 10.1.  Since the SOE registration process was completely changed between 10.0 and 10.1, it is very possible that this SOE will not be compatible with 10.1.)
+* ArcGIS Server 10.1.
 * Microsoft .NET Framework 3.5
 
 ## Compilation ##
@@ -65,10 +65,6 @@ http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/
 
 This project is the actual Server Object Extension (SOE).
 
-### RegisterSOE ###
-
-This program is used to register an SOE with ArcGIS Server.  It can work with any ArcGIS Server SOE assembly provided you change the application configuration file.
-
 ### LayerMetadataClient ###
 
 This project contains extensions to the [ArcGIS JavaScript API](http://links.esri.com/javascript) layer classes that allow them to call the Layer Metadata SOE.
@@ -86,13 +82,6 @@ QUnit unit test for metadataExtensions.
 
 1. Copy `unittest.js.sample` to `unittest.js`.  (`unittest.js` is in the `.gitignore` file, so it will not be pushed to the repository.)
 2. Modify the url variable in `unittest.js` so that it points to a map service that has the _Layer Metadata_ capability enabled.
-
-
-## Troubleshooting ##
-
-### I have registered the SOE, but it is not showing up in the list of capabilities in ArcGIS Server Manager.  It does show up in ArcCatalog, though. ###
-
-Restart IIS on the ArcGIS Server.
 
 
 ## F. A. Q. ##
