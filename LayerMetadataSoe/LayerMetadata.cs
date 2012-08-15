@@ -1,26 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-
 using System.Collections.Specialized;
-
-using System.Runtime.InteropServices;
-
-using ESRI.ArcGIS.esriSystem;
-using ESRI.ArcGIS.Server;
-using ESRI.ArcGIS.Geometry;
-using ESRI.ArcGIS.Geodatabase;
-using ESRI.ArcGIS.Carto;
-using ESRI.ArcGIS.SOESupport;
-using System.Xml;
-using System.Xml.Xsl;
 using System.IO;
-using System.Web.Script.Serialization;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
-using Wsdot.ArcObjects.Extensions;
+using System.Web.Script.Serialization;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Xsl;
+using ESRI.ArcGIS.Carto;
+using ESRI.ArcGIS.esriSystem;
+using ESRI.ArcGIS.Geodatabase;
+using ESRI.ArcGIS.Server;
+using ESRI.ArcGIS.SOESupport;
 using LayerMetadata.Properties;
+using Wsdot.ArcObjects.Extensions;
 
 
 //TODO: sign the project (project properties > signing tab > sign the assembly)
@@ -166,9 +162,11 @@ namespace LayerMetadata
 			else
 			{
 				responseProperties = "{\"Content-Type\" : \"application/json\"}";
-				JsonObject obj = new JsonObject();
-				obj.AddString("metadata", xml);
-				return Encoding.UTF8.GetBytes(obj.ToJson());
+				////JsonObject obj = new JsonObject();
+				////obj.AddString("metadata", xml);
+				////return Encoding.UTF8.GetBytes(obj.ToJson());
+
+				return Encoding.UTF8.GetBytes(XmlToJson(xml));
 			}
 		}
 
@@ -205,9 +203,11 @@ namespace LayerMetadata
 			else
 			{
 				responseProperties = "{\"Content-Type\" : \"application/json\"}";
-				JsonObject obj = new JsonObject();
-				obj.AddString("metadata", xml);
-				return Encoding.UTF8.GetBytes(obj.ToJson());
+				//JsonObject obj = new JsonObject();
+				//obj.AddString("metadata", xml);
+				//return Encoding.UTF8.GetBytes(obj.ToJson());
+
+				return Encoding.UTF8.GetBytes(XmlToJson(xml));
 			}
 
 		}
@@ -381,6 +381,12 @@ namespace LayerMetadata
 				bytes = memStream.ToArray();
 			}
 			return bytes;
+		}
+
+		private string XmlToJson(string xml)
+		{
+			XDocument xDoc = XDocument.Parse(xml);
+			return Newtonsoft.Json.JsonConvert.SerializeXNode(xDoc);
 		}
 
 		/// <summary>

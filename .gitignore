@@ -3,4 +3,5 @@ obj
 *.suo
 *.csproj.user
 *.WinMerge
+packages
 LayerMetadataClient/unittest.js
