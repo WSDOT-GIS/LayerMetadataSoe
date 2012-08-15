@@ -117,6 +117,12 @@
 						failHandler(data.error);
 					}
 					else if (typeof (successHandler) === "function") {
+						// In the ArcGIS 10.0 version, an array was returned.
+						// In the ArcGIS 10.1 version, an object is returned.  
+						// This object has a property called layerIds which is an array. 
+						if (!dojo.isArray(data)) {
+							data = data.layerIds;
+						}
 						successHandler(data);
 					}
 				},

@@ -393,6 +393,16 @@ namespace LayerMetadata
 		/// </summary>
 		/// <param name="boundVariables"></param>
 		/// <param name="outputFormat"></param>
+		/// <example>
+		/// <code>
+		/// <![CDATA[public byte[] HandleRESTRequest(string Capabilities, string resourceName, string operationName, string operationInput, string outputFormat, string requestProperties, out string responseProperties)
+		/// {
+		///		// ArcGIS 10.1 bug workaround.
+		///		GetActualFormat(operationInput, ref outputFormat);
+		///		return _reqHandler.HandleRESTRequest(Capabilities, resourceName, operationName, operationInput, outputFormat, requestProperties, out responseProperties);
+		///	}]]>
+		/// </code>
+		/// </example>
 		private void GetActualFormat(string operationInput, ref string outputFormat)
 		{
 			if (string.IsNullOrEmpty(operationInput)) return;
