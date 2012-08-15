@@ -8,7 +8,7 @@
  * @author Jeff Jacobson
  */
 
-(function (dojo, esri) {
+(function () {
 	"use strict";
 
 	var layerUrlRe = /([\w\d\/\:%\.]+\/MapServer)(?:\/(\d*))?\/?$/i; // Match results: [full url, map server url, layer id]
@@ -45,7 +45,6 @@
 		}
 	}
 	
-	esri.layers.getMapServerUrl = getMapServerUrl;
 	
 	/**
 	 * Given an esri.layers.Layer object or a layer URL, returns the URL for a query to the Layer Metadata SOE root page. 
@@ -58,7 +57,7 @@
 		return output;
 	}
 	
-	esri.layers.getMetadataSoeRootUrl = getMetadataSoeRootUrl;
+	
 
 	/**
 	 * Given an esri.layers.Layer object or a layer URL, returns the URL for a query to the Layer Metadata SOE for a list of valid layer IDs. 
@@ -70,7 +69,7 @@
 		return url.mapServerUrl +  "/exts/LayerMetadata/validLayers";
 	}
 	
-	esri.layers.getLayersWithMetadataUrl = getValidLayersUrl;
+	
 
 	/**
 	 * Returns the Layer Metadata SOE URL to retrieve the metadata for a map service feature layer.
@@ -95,7 +94,7 @@
 		return output;
 	}
 	
-	esri.layers.getMetadataUrl = getMetadataUrl;
+	
 
 	/**
 	 * Calls the SOE to get the list of layer IDs that correspond to feature layers. 
@@ -140,7 +139,7 @@
 		}
 	}
 	
-	esri.layers.getIdsOfLayersWithMetadata = getIdsOfLayersWithMetadata;
+	
 	
 	function supportsMetadata(layer, successHandler, failHandler) {
 		var jsonpArgs;
@@ -173,11 +172,17 @@
 		}
 	}
 	
-	esri.layers.supportsMetadata = supportsMetadata;
 
 	function addExtensions() {
 		var i, l, ctor, f, f2, f3, multiLayerClasses = [esri.layers.DynamicMapServiceLayer, esri.layers.ArcGISTiledMapServiceLayer];
 
+		esri.layers.getMapServerUrl = getMapServerUrl;
+		esri.layers.getMetadataSoeRootUrl = getMetadataSoeRootUrl;
+		esri.layers.getLayersWithMetadataUrl = getValidLayersUrl;
+		esri.layers.getMetadataUrl = getMetadataUrl;
+		esri.layers.getIdsOfLayersWithMetadata = getIdsOfLayersWithMetadata;
+		esri.layers.supportsMetadata = supportsMetadata;
+		
 		dojo.extend(esri.layers.Layer, {
 			getIdsOfLayersWithMetadata: function (successHandler, failHandler) {
 				return getIdsOfLayersWithMetadata(this, successHandler, failHandler);
@@ -219,4 +224,4 @@
 	dojo.require("esri.layers.FeatureLayer");
 
 	dojo.addOnLoad(addExtensions);
-}(dojo, esri));
+}());
