@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 
 using System.Collections.Specialized;
@@ -89,6 +90,9 @@ namespace LayerMetadata
 
 		public byte[] HandleRESTRequest(string Capabilities, string resourceName, string operationName, string operationInput, string outputFormat, string requestProperties, out string responseProperties)
 		{
+			// ArcGIS 10.1 bug workaround.
+			GetActualFormat(operationInput, ref outputFormat);
+
 			return _reqHandler.HandleRESTRequest(Capabilities, resourceName, operationName, operationInput, outputFormat, requestProperties, out responseProperties);
 		}
 
@@ -177,7 +181,6 @@ namespace LayerMetadata
 			responseProperties = null;
 
 			long? layerId;
-
 
 			// Throw an exception if a layer ID value was not provided.
 			if (!operationInput.TryGetAsLong("layer", out layerId))
@@ -378,6 +381,53 @@ namespace LayerMetadata
 				bytes = memStream.ToArray();
 			}
 			return bytes;
+		}
+
+		/// <summary>
+		/// <para>ArcGIS Server 10.1 introduced a bug that causes the output format to always be set to "json" 
+		/// even if another format (e.g., "xml") is specified via the "f" parameter in the HTTP request.
+		/// This method reads the "f" parameter from the <paramref name="operationInput"/> and sets the
+		/// <paramref name="outputFormat"/> to be the same value as the "f" parameter.</para>
+		/// <para>If there is no "f" parameter in <paramref name="operationInput"/> then 
+		/// <paramref name="outputFormat"/> will retain its original value.</para>
+		/// </summary>
+		/// <param name="boundVariables"></param>
+		/// <param name="outputFormat"></param>
+		private void GetActualFormat(string operationInput, ref string outputFormat)
+		{
+			if (string.IsNullOrEmpty(operationInput)) return;
+
+			var json = new JsonObject(operationInput);
+			GetActualFormat(json, ref outputFormat);
+		}
+
+		/// <summary>
+		/// <para>ArcGIS Server 10.1 introduced a bug that causes the output format to always be set to "json" 
+		/// even if another format (e.g., "xml") is specified via the "f" parameter in the HTTP request.
+		/// This method reads the "f" parameter from the <paramref name="operationInput"/> and sets the
+		/// <paramref name="outputFormat"/> to be the same value as the "f" parameter.</para>
+		/// <para>If there is no "f" parameter in <paramref name="operationInput"/> then 
+		/// <paramref name="outputFormat"/> will retain its original value.</para>
+		/// </summary>
+		/// <param name="boundVariables"></param>
+		/// <param name="outputFormat"></param>
+		/// <example>
+		/// <code>
+		/// <![CDATA[public byte[] HandleRESTRequest(string Capabilities, string resourceName, string operationName, string operationInput, string outputFormat, string requestProperties, out string responseProperties)
+		/// {
+		///		// ArcGIS 10.1 bug workaround.
+		///		GetActualFormat(operationInput, ref outputFormat);
+		///		return _reqHandler.HandleRESTRequest(Capabilities, resourceName, operationName, operationInput, outputFormat, requestProperties, out responseProperties);
+		///	}]]>
+		/// </code>
+		/// </example>
+		private void GetActualFormat(JsonObject operationInput, ref string outputFormat)
+		{
+			string f;
+			if (operationInput.TryGetString("f", out f)) 
+			{ 
+				outputFormat = f;
+			}
 		}
 
 	}
