@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LayerMetadata", "LayerMetadataSoe\LayerMetadata.csproj", "{3D59D37B-1EE4-4A60-89E5-E7F52A868B88}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0CB00CB9-9188-471B-AB80-2CEA81EC500B}"
