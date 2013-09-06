@@ -33,14 +33,14 @@ using ESRI.ArcGIS.SOESupport;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.2.0")]
-[assembly: AssemblyFileVersion("1.0.2.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
 [assembly: AddInPackage("LayerMetadata", "b75a60f0-e573-45b3-9d40-eb54f1305dc0",
 	Author = "Jeff Jacobson",
 	Company = "Washington State Department of Transportation",
-	Date = "8/10/2012 3:08:31 PM",
+	Date = "9/5/2012 5:30:00 PM",
 	Description = "Provides the ability to access metadata of layer data sources.",
 	TargetProduct = "Server",
-	TargetVersion = "10.1",
-	Version = "1.0")]
+	TargetVersion = "10.2",
+	Version = "1.1")]

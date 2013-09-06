@@ -66,28 +66,10 @@ http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/
 
 ## Projects ##
 
-### LayerMetadata ###
-
 This project is the actual Server Object Extension (SOE).
 
-### LayerMetadataClient ###
-
-This project contains extensions to the [ArcGIS JavaScript API](http://links.esri.com/javascript) layer classes that allow them to call the Layer Metadata SOE.
-
-#### metadataExtensions.js ####
-
-This JavaScript file extends the layer classes to add methods for calling the Layer Metadata SOE.
-
-#### unittest.html ####
-
-QUnit unit test for metadataExtensions.
-
-
-##### Unit Test Setup #####
-
-1. Copy `unittest.js.sample` to `unittest.js`.  (`unittest.js` is in the `.gitignore` file, so it will not be pushed to the repository.)
-2. Modify the url variable in `unittest.js` so that it points to a map service that has the _Layer Metadata_ capability enabled.
-
+## Related projects ##
+[Layer Metadata SOE JavaScript Client](https://github.com/WSDOT-GIS/Layer-Metadata-SOE-JS-Client)
 
 ## F. A. Q. ##
 
