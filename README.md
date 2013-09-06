@@ -81,4 +81,4 @@ What this SOE will do is pubish one metadata document for each LAYER in a map se
 
 ## Contributors ##
 
-* @kitzilla Raster support code.
+* [kitzilla](https://github.com/kitzilla) Raster support code.
