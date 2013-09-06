@@ -17,6 +17,7 @@ using ESRI.ArcGIS.Server;
 using ESRI.ArcGIS.SOESupport;
 using LayerMetadata.Properties;
 using Wsdot.ArcObjects.Extensions;
+using ESRI.ArcGIS.DataSourcesRaster;
 
 
 //TODO: sign the project (project properties > signing tab > sign the assembly)
@@ -313,7 +314,17 @@ namespace LayerMetadata
 			string xml = null;
 			try
 			{
-				layer = msDataAccess.GetDataSource(defaultMapName, layerId) as IDataset;
+				var obj = msDataAccess.GetDataSource(defaultMapName, layerId);
+				// Try to cast as a IRasterBandCollection
+				var rasterBandCollection = obj as IRasterBandCollection;
+				if (rasterBandCollection != null && rasterBandCollection.Count > 0)
+				{
+					layer = rasterBandCollection.Item(0).RasterDataset as IDataset;
+				}
+				else
+				{
+					layer = obj as IDataset;
+				}
 			}
 #if DEBUG
 			catch (NotImplementedException ex)
