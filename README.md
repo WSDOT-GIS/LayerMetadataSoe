@@ -78,3 +78,7 @@ This project is the actual Server Object Extension (SOE).
 ArcGIS Server 10.1 server only adds the ability to publish a single metadata document per map service.
 
 What this SOE will do is pubish one metadata document for each LAYER in a map service.
+
+## Contributors ##
+
+* @kitzilla Raster support code.
