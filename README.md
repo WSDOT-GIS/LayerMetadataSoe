@@ -64,10 +64,6 @@ http://*YourServer*/ArcGIS/rest/services/*YourMap*/MapServer/exts/LayerMetadata/
 * layer: An integer corresponding to a feature layer ID in the map service.
 * f: The output format.  Valid options are `xml`, `htm`, `json` and `pjson`.
 
-## Projects ##
-
-This project is the actual Server Object Extension (SOE).
-
 ## Related projects ##
 [Layer Metadata SOE JavaScript Client](https://github.com/WSDOT-GIS/Layer-Metadata-SOE-JS-Client)
 
