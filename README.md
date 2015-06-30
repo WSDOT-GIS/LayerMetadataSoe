@@ -3,7 +3,7 @@
 This project is an ArcGIS Server Object Extension (SOE) that allows a map service to publish the metadata for its individual layers to the user.
 
 ## License ##
-This program is licensed under the [MIT license](http://www.opensource.org/licenses/MIT)
+[Unlicense](http://unlicense.org/)
 
 ## Prerequisites ##
 
