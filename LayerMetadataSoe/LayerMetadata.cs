@@ -114,7 +114,7 @@ namespace LayerMetadata
 
 			RestOperation getLayerMetadataOp = new RestOperation("getMetadata",
 				new string[] { "layer" },
-				new string[] { "xml", "html", "json" },
+				new string[] { "xml", "json" },
 				GetMetadataForLayer
 				);
 
@@ -149,13 +149,7 @@ namespace LayerMetadata
 			//execute
 			var xml = GetMetadataXml(layerID);
 
-			if (Regex.IsMatch(outputFormat, @"(?i)html?"))
-			{
-				// Transform to HTML using XSLT.
-				responseProperties = "{\"Content-Type\" : \"text/html\"}";
-				return TransformToHtml(xml);
-			}
-			else if (string.Compare(outputFormat, "xml", true) == 0)
+			if (string.Compare(outputFormat, "xml", true) == 0)
 			{
 				responseProperties = "{\"Content-Type\" : \"text/xml\"}";
 				return Encoding.UTF8.GetBytes(xml);
@@ -190,13 +184,7 @@ namespace LayerMetadata
 			int layerIdInt = (int)layerId.Value;
 			string xml = GetMetadataXml(layerIdInt);
 
-			if (Regex.IsMatch(outputFormat, @"(?i)html?"))
-			{
-				// Transform to HTML using XSLT.
-				responseProperties = "{\"Content-Type\" : \"text/html\"}";
-				return TransformToHtml(xml);
-			}
-			else if (string.Compare(outputFormat, "xml", true) == 0)
+			if (string.Compare(outputFormat, "xml", true) == 0)
 			{
 				responseProperties = "{\"Content-Type\" : \"text/xml\"}";
 				return Encoding.UTF8.GetBytes(xml);
@@ -367,31 +355,6 @@ namespace LayerMetadata
 				xml = "<error>No metadata found for this layer.</error>";
 			}
 			return xml;
-		}
-
-		/// <summary>
-		/// Transforms metadata XML into HTML using XSLT.
-		/// </summary>
-		/// <param name="xml">Metadata XML from a feature layer.</param>
-		/// <returns>Returns bytes for the output HTML.</returns>
-		private static byte[] TransformToHtml(string xml)
-		{
-			var xsltDoc = new XmlDocument();
-			xsltDoc.LoadXml(Resources.FgdcPlusHtml5);
-			var xForm = new XslCompiledTransform();
-			xForm.Load(xsltDoc);
-
-			var xmlDoc = new XmlDocument();
-			xmlDoc.LoadXml(xml);
-			var args = new XsltArgumentList();
-
-			byte[] bytes;
-			using (var memStream = new MemoryStream())
-			{
-				xForm.Transform(xmlDoc, args, memStream);
-				bytes = memStream.ToArray();
-			}
-			return bytes;
 		}
 
 		private string XmlToJson(string xml)
